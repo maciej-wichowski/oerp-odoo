@@ -17,3 +17,8 @@ class PackageConfigurator(models.AbstractModel):
         'res.company', required=True, default=lambda s: s.env.company
     )
     currency_id = fields.Many2one(related='company_id.currency_id')
+    circulation_ids = fields.One2many(
+        comodel_name='package.configurator.circulation',
+        inverse_name='configurator_id',
+        string="Circulations",
+    )

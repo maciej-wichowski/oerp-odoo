@@ -32,6 +32,9 @@ class PackageConfiguratorBox(models.Model):
             ] = company.package_default_outside_wrapping_extra
         return res
 
+    circulation_ids = fields.One2many(
+        comodel_name='package.configurator.box.circulation'
+    )
     lid_height = fields.Float(required=True)
     lid_extra = fields.Float()
     outside_wrapping_extra = fields.Float()
@@ -118,7 +121,7 @@ class PackageConfiguratorBox(models.Model):
                         length=box.lid_inside_wrapping_length,
                         width=box.lid_inside_wrapping_width,
                     ).area,
-                    box.lamination_inside_id.price_unit,
+                    box.lamination_inside_id.unit_cost,
                 )
                 data.update(
                     {
@@ -136,7 +139,7 @@ class PackageConfiguratorBox(models.Model):
                         length=box.lid_outside_wrapping_length,
                         width=box.lid_outside_wrapping_width,
                     ).area,
-                    box.lamination_outside_id.price_unit,
+                    box.lamination_outside_id.unit_cost,
                 )
                 data.update(
                     {
@@ -159,6 +162,9 @@ class PackageConfiguratorBox(models.Model):
         'lid_inside_wrapping_width',
         'lid_outside_wrapping_length',
         'lid_outside_wrapping_width',
+        'carton_id',
+        'wrappingpaper_inside_id',
+        'wrappingpaper_outside_id',
     )
     def _compute_fit_qty(self):
         for box in self:

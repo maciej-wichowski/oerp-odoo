@@ -28,6 +28,8 @@
                         <group name="general" string="General">
                             <field name="box_type_id"/>
                             <field name="carton_id"/>
+                            <field name="wrappingpaper_outside_id"/>
+                            <field name="wrappingpaper_inside_id"/>
                             <field name="lamination_outside_id"/>
                             <field name="lamination_inside_id"/>
                         </group>
@@ -139,7 +141,59 @@
                                 </tbody>
                             </table>
                         </group>
+                        <group
+                            name="fit_quantities"
+                            string="Fit Quantities"
+                            invisible="not base_length or not base_width or not base_height or not lid_height"
+                        >
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th/>
+                                        <th>Layout Fit Quantity</th>
+                                        <th>Inside Wrapping Fit Quantity</th>
+                                        <th>Outside Wrapping Fit Quantity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Base</td>
+                                        <td><field name="base_layout_fit_qty"/></td>
+                                        <td>
+                                            <field name="base_inside_fit_qty"/>
+                                        </td>
+                                        <td>
+                                            <field name="base_outside_fit_qty"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Lid</td>
+                                        <td><field name="lid_layout_fit_qty"/></td>
+                                        <td>
+                                            <field name="lid_inside_fit_qty"/>
+                                        </td>
+                                        <td>
+                                            <field name="lid_outside_fit_qty"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </group>
                     </group>
+                    <notebook>
+                        <page name="circulations" string="Circulations">
+                            <field name="circulation_ids">
+                                <tree editable="bottom">
+                                    <field name="quantity"/>
+                                    <field name="unit_cost"/>
+                                    <field name="total_cost"/>
+                                    <field name="total_carton_quantity"/>
+                                    <field name="total_outside_wrappingpaper_quantity"/>
+                                    <field name="total_inside_wrappingpaper_quantity"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>

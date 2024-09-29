@@ -7,6 +7,9 @@ class TestProductPackageConfiguratorCommon(TransactionCase):
         super().setUpClass()
         cls.ProductProduct = cls.env['product.product']
         cls.PackageConfiguratorBox = cls.env['package.configurator.box']
+        cls.PackageConfiguratorBoxCirculation = cls.env[
+            'package.configurator.box.circulation'
+        ]
         cls.PackageBoxType = cls.env['package.box.type']
         cls.PackageCarton = cls.env['package.carton']
         cls.PackageWrappingpaper = cls.env['package.wrappingpaper']
@@ -18,28 +21,28 @@ class TestProductPackageConfiguratorCommon(TransactionCase):
                 'thickness': 1.5,
                 'sheet_length': 1000,
                 'sheet_width': 700,
-                'price_unit': 0.05,
+                'unit_cost': 0.05,
             }
         )
         cls.package_wrappingpaper_1 = cls.PackageWrappingpaper.create(
             {
                 'name': 'Wrapping 1',
-                'sheet_length': 800,
+                'sheet_length': 700,
                 'sheet_width': 400,
-                'price_unit': 0.06,
+                'unit_cost': 0.04,
             }
         )
         cls.package_wrappingpaper_2 = cls.PackageWrappingpaper.create(
             {
                 'name': 'Wrapping 2',
-                'sheet_length': 700,
+                'sheet_length': 800,
                 'sheet_width': 400,
-                'price_unit': 0.04,
+                'unit_cost': 0.06,
             }
         )
         cls.package_lamination_1 = cls.PackageLamination.create(
             {
                 'name': 'Lamination 1',
-                'price_unit': 2,
+                'unit_cost': 2,
             }
         )

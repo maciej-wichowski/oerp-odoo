@@ -15,6 +15,8 @@
     'data': [
         'security/product_package_configurator_groups.xml',
         'security/ir.model.access.csv',
+        'security/package_configurator_box_security.xml',
+        'security/package_configurator_box_circulation_security.xml',
         'security/package_box_type_security.xml',
         'security/package_carton_security.xml',
         'security/package_wrappingpaper_security.xml',

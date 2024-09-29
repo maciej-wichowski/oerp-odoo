@@ -8,7 +8,7 @@ class PackageSheet(models.AbstractModel):
     _name = 'package.sheet'
     _description = "Package Sheet"
 
-    price_unit = fields.Float(required=True, digits=const.DecimalPrecision.PRICE)
+    unit_cost = fields.Float(required=True, digits=const.DecimalPrecision.PRICE)
     sheet_length = fields.Float(
         "Length, mm", required=True, digits=const.DecimalPrecision.SIZE
     )
