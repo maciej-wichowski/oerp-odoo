@@ -1,2 +1,8 @@
-def calc_area_price(price_unit: float, area: float):
-    return price_unit * area
+from odoo.tools import float_round
+
+
+def multiply(unit: float, multiplier: float, digits=None):
+    val = unit * multiplier
+    if digits is not None:
+        val = float_round(val, precision_digits=digits)
+    return val

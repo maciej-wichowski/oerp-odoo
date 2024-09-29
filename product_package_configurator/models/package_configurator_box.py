@@ -2,7 +2,7 @@ from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
 from .. import utils
-from ..value_objects.layout import BaseDimensions, Layout2D, LidDimensions
+from ..value_objects.layout import BaseDimensions, Layout2D, LayoutFitter, LidDimensions
 
 MANDATORY_LAYOUT_INP_FIELDS = [
     'base_length',
@@ -36,8 +36,13 @@ class PackageConfiguratorBox(models.Model):
     lid_extra = fields.Float()
     outside_wrapping_extra = fields.Float()
     box_type_id = fields.Many2one('package.box.type', required=True)
-    # Should we call it grayboard?
     carton_id = fields.Many2one('package.carton', required=True)
+    wrappingpaper_outside_id = fields.Many2one(
+        'package.wrappingpaper', string="Outside Wrapping Paper"
+    )
+    wrappingpaper_inside_id = fields.Many2one(
+        'package.wrappingpaper', string="Inside Wrapping Paper"
+    )
     lamination_outside_id = fields.Many2one(
         'package.lamination', string="Outside Lamination"
     )
@@ -63,6 +68,13 @@ class PackageConfiguratorBox(models.Model):
     lamination_inside_price = fields.Float(compute='_compute_lamination_fields')
     lamination_outside_area = fields.Float(compute='_compute_lamination_fields')
     lamination_outside_price = fields.Float(compute='_compute_lamination_fields')
+    # Quantities
+    base_layout_fit_qty = fields.Integer(compute='_compute_fit_qty')
+    base_inside_fit_qty = fields.Integer(compute='_compute_fit_qty')
+    base_outside_fit_qty = fields.Integer(compute='_compute_fit_qty')
+    lid_layout_fit_qty = fields.Integer(compute='_compute_fit_qty')
+    lid_inside_fit_qty = fields.Integer(compute='_compute_fit_qty')
+    lid_outside_fit_qty = fields.Integer(compute='_compute_fit_qty')
 
     @api.depends(
         'carton_id',
@@ -134,6 +146,26 @@ class PackageConfiguratorBox(models.Model):
                 )
             box.update(data)
 
+    @api.depends(
+        'base_layout_length',
+        'base_layout_width',
+        'base_inside_wrapping_length',
+        'base_inside_wrapping_width',
+        'base_outside_wrapping_length',
+        'base_outside_wrapping_width',
+        'lid_layout_length',
+        'lid_layout_width',
+        'lid_inside_wrapping_length',
+        'lid_inside_wrapping_width',
+        'lid_outside_wrapping_length',
+        'lid_outside_wrapping_width',
+    )
+    def _compute_fit_qty(self):
+        for box in self:
+            data = box._get_init_fit_qty_data()
+            data.update(box._get_fit_qty_data())
+            box.update(data)
+
     @api.constrains(
         'box_type_id',
         'base_length',
@@ -196,6 +228,78 @@ class PackageConfiguratorBox(models.Model):
             'lid_outside_wrapping_width': res['lid']['outside_wrapping'].width,
         }
 
+    def _get_fit_qty_data(self):
+        def set_fit_qty_if_applicable(
+            data: dict, fname: str, length: int, width: int, sheet_layout: Layout2D
+        ):
+            if not length or not width:
+                return None
+            data[fname] = utils.fitter.calc_fit_quantity(
+                LayoutFitter(
+                    product_layout=Layout2D(length=length, width=width),
+                    sheet_layout=sheet_layout,
+                )
+            )
+
+        self.ensure_one()
+        carton_layout = Layout2D(
+            length=self.carton_id.sheet_length, width=self.carton_id.sheet_width
+        )
+        data = {}
+        set_fit_qty_if_applicable(
+            data,
+            'base_layout_fit_qty',
+            self.base_layout_length,
+            self.base_layout_width,
+            carton_layout,
+        )
+        set_fit_qty_if_applicable(
+            data,
+            'lid_layout_fit_qty',
+            self.lid_layout_length,
+            self.lid_layout_width,
+            carton_layout,
+        )
+        if self.wrappingpaper_inside_id:
+            inside_layout = Layout2D(
+                length=self.wrappingpaper_inside_id.sheet_length,
+                width=self.wrappingpaper_inside_id.sheet_width,
+            )
+            set_fit_qty_if_applicable(
+                data,
+                'base_inside_fit_qty',
+                self.base_inside_wrapping_length,
+                self.base_inside_wrapping_width,
+                inside_layout,
+            )
+            set_fit_qty_if_applicable(
+                data,
+                'lid_inside_fit_qty',
+                self.lid_inside_wrapping_length,
+                self.lid_inside_wrapping_width,
+                inside_layout,
+            )
+        if self.wrappingpaper_outside_id:
+            outside_layout = Layout2D(
+                length=self.wrappingpaper_outside_id.sheet_length,
+                width=self.wrappingpaper_outside_id.sheet_width,
+            )
+            set_fit_qty_if_applicable(
+                data,
+                'base_outside_fit_qty',
+                self.base_outside_wrapping_length,
+                self.base_outside_wrapping_width,
+                outside_layout,
+            )
+            set_fit_qty_if_applicable(
+                data,
+                'lid_outside_fit_qty',
+                self.lid_outside_wrapping_length,
+                self.lid_outside_wrapping_width,
+                outside_layout,
+            )
+        return data
+
     def _get_init_layouts_data(self):
         self.ensure_one()
         return {
@@ -219,4 +323,14 @@ class PackageConfiguratorBox(models.Model):
             'lamination_inside_price': 0,
             'lamination_outside_area': 0,
             'lamination_outside_price': 0,
+        }
+
+    def _get_init_fit_qty_data(self):
+        return {
+            'base_layout_fit_qty': 0,
+            'base_inside_fit_qty': 0,
+            'base_outside_fit_qty': 0,
+            'lid_layout_fit_qty': 0,
+            'lid_inside_fit_qty': 0,
+            'lid_outside_fit_qty': 0,
         }

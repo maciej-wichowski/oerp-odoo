@@ -8,6 +8,7 @@ class StrEnum(str, Enum):
 # TODO: add decimal precisions on various float fields!
 class DecimalPrecision(StrEnum):
     SIZE = 'Package Configurator Size'
+    PRICE = 'Package Configurator Price'
 
 
 DEFAUL_GLOBAL_BOX_EXTRA = 30  # mm

@@ -11,6 +11,8 @@ class TestPackageConfiguratorBox(common.TestProductPackageConfiguratorCommon):
                 'box_type_id': cls.package_box_type_1.id,
                 # thickness: 1.5mm
                 'carton_id': cls.package_carton_1.id,
+                'wrappingpaper_outside_id': cls.package_wrappingpaper_1.id,
+                'wrappingpaper_inside_id': cls.package_wrappingpaper_2.id,
                 'base_length': 0,
                 'base_width': 0,
                 'base_height': 0,
@@ -44,7 +46,6 @@ class TestPackageConfiguratorBox(common.TestProductPackageConfiguratorCommon):
         self.assertEqual(cfg.base_outside_wrapping_width, 141)
         self.assertEqual(cfg.lid_layout_length, 232)
         self.assertEqual(cfg.lid_layout_width, 109)
-        # Wrapping
         self.assertEqual(cfg.lid_inside_wrapping_length, 232)
         self.assertEqual(cfg.lid_inside_wrapping_width, 109)
         self.assertEqual(cfg.lid_outside_wrapping_length, 272)
@@ -58,6 +59,16 @@ class TestPackageConfiguratorBox(common.TestProductPackageConfiguratorCommon):
         self.assertEqual(cfg.lamination_outside_area, 0.0933024)
         # 2 * 0.0933024
         self.assertEqual(cfg.lamination_outside_price, 0.1866048)
+        # Quantities
+        # carton layout is 1000x700 (mm)
+        # outside wrappingpaper layout is 800x400 (mm)
+        # inside wrappingpaper layout is 700x400 (mm)
+        self.assertEqual(cfg.base_layout_fit_qty, 27)
+        self.assertEqual(cfg.base_inside_fit_qty, 9)
+        self.assertEqual(cfg.base_outside_fit_qty, 6)
+        self.assertEqual(cfg.lid_layout_fit_qty, 27)
+        self.assertEqual(cfg.lid_inside_fit_qty, 9)
+        self.assertEqual(cfg.lid_outside_fit_qty, 5)
 
     def test_02_configure_box_missing_base_height(self):
         # WHEN

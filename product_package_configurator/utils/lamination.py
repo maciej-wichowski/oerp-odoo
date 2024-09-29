@@ -13,5 +13,5 @@ def calc_area_and_price(
     base_wrapping_area: float, lid_wrapping_area: float, price_unit: float
 ) -> dict:
     area = calc_area(base_wrapping_area, lid_wrapping_area)
-    price = misc.calc_area_price(price_unit, area)
+    price = misc.multiply(price_unit, area)
     return {'area': area, 'price': price}

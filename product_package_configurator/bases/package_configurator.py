@@ -16,3 +16,4 @@ class PackageConfigurator(models.AbstractModel):
     company_id = fields.Many2one(
         'res.company', required=True, default=lambda s: s.env.company
     )
+    currency_id = fields.Many2one(related='company_id.currency_id')
